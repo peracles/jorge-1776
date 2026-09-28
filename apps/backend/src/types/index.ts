@@ -1,0 +1,36 @@
+export interface User {
+  id: string;
+  fullName: string;
+  email: string;
+  passwordHash: string;
+  balance: number;
+  createdAt: string;
+}
+
+export interface SnailPayChargeRequest {
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+  fullName: string;
+  amount: number;
+  payerId: string;
+  payerEmail: string;
+}
+
+export interface SnailPayChargeResponse {
+  id: string;
+  status: "approved" | "rejected" | "error";
+  statusDetail: string;
+  transactionAmount: number;
+  dateCreated: string;
+  authorizationCode?: string;
+  reference: string;
+  payerId: string;
+  payerEmail: string;
+  cardNumber: string;
+  cvv: string;
+}
+
+export interface AppError extends Error {
+  statusCode?: number;
+}
