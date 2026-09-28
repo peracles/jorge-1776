@@ -11,9 +11,10 @@ Aplicacion web de apuestas en carreras de caracoles. Desarrollada con React + Ex
 
 ## Requisitos
 
-- Node.js 20+
-- pnpm 9+
-- Docker y Docker Compose (opcional)
+- Node.js v24.21.0
+- pnpm 12.5.1
+- Docker 29.7.2
+- Docker Compose v5.4.0
 
 ## Ejecucion local
 
