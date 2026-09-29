@@ -249,4 +249,18 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - Instaladas dependencias faltantes de shadcn/ui: @base-ui/react, class-variance-authority
 - **Siguiente paso:** Auth Context con localStorage persistence (Milestone 3.2)
 
+### Commit 12: Frontend auth context
+- **Fecha:** 2026-09-29
+- **Branch:** feature/frontend-auth-context
+- **Descripcion:** AuthContext provider con useAuth hook basado en Context API
+- **Archivos modificados:** src/stores/AuthContext.tsx, src/hooks/useAuth.ts, src/main.tsx
+- **Decisiones tomadas:**
+  - AuthContext creado en src/stores/ (separacion: stores para estado global, hooks para consumo)
+  - AuthProvider envuelve App en main.tsx — estado accesible desde cualquier componente
+  - useAuth ahora es un wrapper de useContext(AuthContext) con guard de error si se usa fuera del Provider
+  - Logica de localStorage (loadUser, loadToken, login, logout) vive en el Context, no en el hook
+  - Hook useAuth simplificado de ~50 lineas a ~8 lineas — solo consume contexto
+  - Lazy initialization en useState mantiene el fix de React 19 (sin cascading renders)
+- **Siguiente paso:** Registration form con Zod validation (Milestone 3.3)
+
 ---
