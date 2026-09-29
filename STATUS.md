@@ -193,4 +193,17 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - AuthRequest interface extiende Request con userId para controllers protegidos
 - **Siguiente paso:** SnailPay mock payment service (Milestone 2.4)
 
+### Commit 8: SnailPay mock payment service
+- **Fecha:** 2026-09-29
+- **Branch:** feature/snailpay-service
+- **Descripcion:** Servicio mock de pagos SnailPay con 5 escenarios de respuesta
+- **Archivos modificados:** src/services/snailpay.ts, src/controllers/snailpay.ts, src/routes/snailpay.ts, src/app.ts
+- **Decisiones tomadas:**
+  - 5 escenarios: cobro exitoso, tarjeta rechazada, CVV invalido, tarjeta vencida, error de sistema
+  - Error de sistema se activa con header X-SnailPay-Simulate: system_error (retorna HTTP 500)
+  - Ruta protegida con middleware authenticate() — solo usuarios autenticados pueden pagar
+  - Respuesta incluye todos los campos del spec: id, status, statusDetail, transactionAmount, dateCreated, authorizationCode, reference, payerId, payerEmail
+  - authorizationCode solo se genera en cobros exitosos (6 digitos aleatorios)
+- **Siguiente paso:** Validacion de inputs con Zod (wip)
+
 ---
