@@ -206,4 +206,47 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - authorizationCode solo se genera en cobros exitosos (6 digitos aleatorios)
 - **Siguiente paso:** Validacion de inputs con Zod (wip)
 
+### Commit 9 (wip): Zod input validation
+- **Fecha:** 2026-09-29
+- **Branch:** feature/snailpay-service
+- **Descripcion:** Validacion de inputs con Zod schemas para auth y snailpay endpoints
+- **Archivos modificados:** src/validators/auth.ts, src/validators/snailpay.ts, src/controllers/auth.ts, src/controllers/snailpay.ts, package.json, pnpm-lock.yaml
+- **Decisiones tomadas:**
+  - Schemas separados en src/validators/ (un archivo por dominio)
+  - registerSchema: fullName min 2, email valido, password min 6
+  - loginSchema: email valido, password requerido
+  - snailpaySchema: cardNumber 16 digitos, expiryDate formato MM/YY, cvv 3 digitos, amount positivo, payerEmail valido
+  - safeParse() en controllers — retorna 400 con primer mensaje de error si validacion falla
+  - parsed.data se pasa al service (tipos inferidos de Zod, no del body sin validar)
+- **Siguiente paso:** Global error handling (Milestone 2.5)
+
+### Commit 10: Global error handling
+- **Fecha:** 2026-09-29
+- **Branch:** feature/error-handling
+- **Descripcion:** Sistema de errores tipado con clases personalizadas y handler global mejorado
+- **Archivos modificados:** src/errors/app-error.ts, src/errors/index.ts, src/middleware/error.ts, src/services/auth.ts, src/services/snailpay.ts, src/controllers/auth.ts, src/controllers/snailpay.ts, src/types/index.ts, src/app.ts
+- **Decisiones tomadas:**
+  - Clases de error tipadas: AppError (base), NotFoundError (404), ValidationError (400), AuthenticationError (401), ConflictError (409), SystemError (500)
+  - isOperational flag distingue errores esperados (no loggear) de errores inesperados (loggear con stack trace)
+  - notFoundHandler captura rutas inexistentes antes del errorHandler
+  - Formato de respuesta estandarizado: { error, message, statusCode, path }
+  - Reemplazados todos los Object.assign(new Error, { statusCode }) por clases tipadas
+  - AppError removido de types/ y movido a errors/ como clase (no interface)
+- **Siguiente paso:** Inicio de Epic 3 — Frontend UI (Milestone 3.1)
+
+### Commit 11: Frontend routing and layout
+- **Fecha:** 2026-09-29
+- **Branch:** feature/frontend-routing-layout
+- **Descripcion:** Layout con Header, routing protegido con AppLayout, token storage en useAuth
+- **Archivos modificados:** src/components/layout/Header.tsx, src/components/layout/AppLayout.tsx, src/hooks/useAuth.ts, src/App.tsx, src/features/dashboard/pages/DashboardPage.tsx, tsconfig.app.json, package.json
+- **Decisiones tomadas:**
+  - AppLayout usa Outlet de React Router para nested routes (escalable para futuras rutas protegidas)
+  - Header muestra nombre de usuario, saldo formateado y boton de logout con shadcn Button
+  - useAuth ahora almacena token en localStorage (snail_racing_token) para llamadas a API protegidas
+  - login() ahora acepta (userData, token) para guardar ambos
+  - Dashboard simplificado — Header ya no esta dentro de la pagina sino en el layout
+  - Fix tsconfig.app.json: removido baseUrl deprecado, paths usa rutas relativas
+  - Instaladas dependencias faltantes de shadcn/ui: @base-ui/react, class-variance-authority
+- **Siguiente paso:** Auth Context con localStorage persistence (Milestone 3.2)
+
 ---
