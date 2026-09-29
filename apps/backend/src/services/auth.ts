@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { UserModel } from "../models/user.js";
+import { SessionModel } from "../models/session.js";
 import type { User } from "../types/index.js";
 
 const SALT_ROUNDS = 10;
@@ -18,7 +19,8 @@ export const AuthService = {
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
     const user = UserModel.create({ fullName, email, passwordHash });
-    return sanitizeUser(user);
+    const session = SessionModel.create(user.id);
+    return { user: sanitizeUser(user), token: session.id };
   },
 
   async login(email: string, password: string) {
@@ -32,6 +34,14 @@ export const AuthService = {
       throw Object.assign(new Error("Invalid credentials"), { statusCode: 401 });
     }
 
-    return sanitizeUser(user);
+    const session = SessionModel.create(user.id);
+    return { user: sanitizeUser(user), token: session.id };
+  },
+
+  logout(token: string): void {
+    const deleted = SessionModel.delete(token);
+    if (!deleted) {
+      throw Object.assign(new Error("Session not found"), { statusCode: 404 });
+    }
   },
 };

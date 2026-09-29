@@ -31,6 +31,12 @@ export interface SnailPayChargeResponse {
   cvv: string;
 }
 
+export interface Session {
+  id: string;
+  userId: string;
+  createdAt: string;
+}
+
 export interface Transaction {
   id: string;
   userId: string;
