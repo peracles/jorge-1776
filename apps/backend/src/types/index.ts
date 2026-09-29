@@ -45,7 +45,3 @@ export interface Transaction {
   won: boolean;
   date: string;
 }
-
-export interface AppError extends Error {
-  statusCode?: number;
-}

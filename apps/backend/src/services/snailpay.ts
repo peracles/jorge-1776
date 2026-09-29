@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import type { SnailPayChargeRequest, SnailPayChargeResponse } from "../types/index.js";
+import { SystemError } from "../errors/index.js";
 
 const VALID_CARD = "1234123412341234";
 const VALID_CVV = "543";
@@ -28,7 +29,7 @@ function buildResponse(
 export const SnailPayService = {
   processPayment(req: SnailPayChargeRequest, simulateSystemError: boolean): SnailPayChargeResponse {
     if (simulateSystemError) {
-      throw Object.assign(new Error("SnailPay service is temporarily unavailable"), { statusCode: 500 });
+      throw new SystemError("SnailPay service is temporarily unavailable");
     }
 
     if (req.cardNumber !== VALID_CARD) {

@@ -2,12 +2,13 @@ import type { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.js";
 import type { AuthRequest } from "../middleware/auth.js";
 import { registerSchema, loginSchema } from "../validators/auth.js";
+import { ValidationError } from "../errors/index.js";
 
 export async function register(req: Request, res: Response, next: NextFunction) {
   try {
     const parsed = registerSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw Object.assign(new Error(parsed.error.issues[0].message), { statusCode: 400 });
+      throw new ValidationError(parsed.error.issues[0].message);
     }
     const { fullName, email, password } = parsed.data;
     const result = await AuthService.register(fullName, email, password);
@@ -21,7 +22,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const parsed = loginSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw Object.assign(new Error(parsed.error.issues[0].message), { statusCode: 400 });
+      throw new ValidationError(parsed.error.issues[0].message);
     }
     const { email, password } = parsed.data;
     const result = await AuthService.login(email, password);
