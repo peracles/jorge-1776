@@ -31,6 +31,15 @@ export interface SnailPayChargeResponse {
   cvv: string;
 }
 
+export interface Transaction {
+  id: string;
+  userId: string;
+  snailId: number;
+  amount: number;
+  won: boolean;
+  date: string;
+}
+
 export interface AppError extends Error {
   statusCode?: number;
 }

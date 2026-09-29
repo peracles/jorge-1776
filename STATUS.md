@@ -113,4 +113,55 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - Seleccion de tecnologias documentada en PLAN.md
 - **Siguiente paso:** Scaffolding del backend con estructura MVC
 
+### Commit 2: Backend scaffolding
+- **Fecha:** 2026-09-28
+- **Branch:** feature/backend-scaffolding
+- **Descripcion:** Estructura MVC base del backend con Express + TypeScript
+- **Archivos modificados:** apps/backend/package.json, tsconfig.json, Dockerfile, src/app.ts, src/config/index.ts, src/middleware/error.ts, src/routes/health.ts, src/types/index.ts
+- **Decisiones tomadas:**
+  - Express 5.x con TypeScript ESM
+  - bcryptjs sobre bcrypt por portabilidad (JS puro sin dependencias nativas)
+  - Estructura MVC: routes → middleware → controllers → services → models
+- **Siguiente paso:** Scaffolding del frontend
+
+### Commit 3: Frontend scaffolding
+- **Fecha:** 2026-09-28
+- **Branch:** feature/frontend-scaffolding
+- **Descripcion:** Estructura base del frontend con Vite + React + TypeScript + Tailwind + shadcn/ui
+- **Archivos modificados:** apps/frontend/ (completo)
+- **Decisiones tomadas:**
+  - Vite 8 con React 19 y TypeScript
+  - Tailwind CSS 4 con plugin de Vite
+  - shadcn/ui para componentes accesibles y customizables
+  - Feature-based structure para organizar por dominio funcional
+  - React Router para navegacion con ProtectedRoute
+- **Siguiente paso:** Docker Compose para desarrollo
+
+### Commit 4: Docker Compose
+- **Fecha:** 2026-09-29
+- **Branch:** feature/docker-compose
+- **Descripcion:** Docker Compose para desarrollo con hot-reload y apps independientes
+- **Archivos modificados:** docker-compose.yml, apps/frontend/Dockerfile, apps/frontend/vite.config.ts, apps/backend/Dockerfile, apps/backend/.dockerignore, apps/frontend/.dockerignore, apps/backend/pnpm-workspace.yaml
+- **Decisiones tomadas:**
+  - Apps independientes sin workspace de pnpm (cada una con su propio node_modules y lockfile)
+  - Volumes para hot-reload en desarrollo
+  - Red bridge (snail-net) para comunicacion entre contenedores
+  - .dockerignore para evitar copiar node_modules local al build context
+  - pnpm approve-builds en Dockerfile para permitir build scripts de esbuild
+  - Vite server.host = 0.0.0.0 para acceso desde contenedor
+- **Siguiente paso:** Modelos y tipos del backend
+
+### Commit 5: Backend models and types
+- **Fecha:** 2026-09-29
+- **Branch:** feature/backend-models-types
+- **Descripcion:** Interfaces TypeScript y User model con persistencia en JSON file
+- **Archivos modificados:** src/types/index.ts, src/models/user.ts, data/users.json, src/app.ts, src/routes/health.ts
+- **Decisiones tomadas:**
+  - Interfaces: User, Transaction, SnailPayChargeRequest, SnailPayChargeResponse, AppError
+  - User model con metodos findById, findByEmail, create, updateBalance
+  - Persistencia con JSON file (data/users.json) como base de datos simulada
+  - UUID v4 para IDs de usuarios
+  - Fix de type annotations en app.ts y health.ts para compatibilidad con pnpm + TypeScript
+- **Siguiente paso:** Servicio de autenticacion (Milestone 2.2)
+
 ---
