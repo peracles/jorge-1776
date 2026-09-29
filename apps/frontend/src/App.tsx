@@ -3,6 +3,7 @@ import { LoginPage } from "./features/auth/pages/LoginPage";
 import { RegisterPage } from "./features/auth/pages/RegisterPage";
 import { DashboardPage } from "./features/dashboard/pages/DashboardPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
+import { AppLayout } from "./components/layout/AppLayout";
 import { useAuth } from "./hooks/useAuth";
 
 function App() {
@@ -15,13 +16,14 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
-          path="/dashboard"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
