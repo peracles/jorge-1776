@@ -22,6 +22,7 @@ _Pendiente — se actualizara al finalizar el proyecto._
 | 5 | Recharts para graficas | Libreria mas popular para React, API declarativa, buen soporte TS | 1 |
 | 6 | bcryptjs sobre bcrypt | JS puro sin dependencias nativas, mas portable, mismo resultado | 1 |
 | 7 | Vitest sobre Jest | Integracion nativa con Vite, mas rapido, API compatible | 1 |
+| 8 | Session-based auth sobre JWT | Prueba tecnica con 1 usuario, logout instantaneo, menor complejidad. JWT requiere secret key, refresh tokens y no permite invalidacion facil | 6 |
 
 ---
 
@@ -163,5 +164,18 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - UUID v4 para IDs de usuarios
   - Fix de type annotations en app.ts y health.ts para compatibilidad con pnpm + TypeScript
 - **Siguiente paso:** Servicio de autenticacion (Milestone 2.2)
+
+### Commit 6: Backend auth service
+- **Fecha:** 2026-09-29
+- **Branch:** feature/backend-auth-service
+- **Descripcion:** Servicio de autenticacion con registro y login usando bcryptjs
+- **Archivos modificados:** src/services/auth.ts, src/controllers/auth.ts, src/routes/auth.ts, src/app.ts
+- **Decisiones tomadas:**
+  - bcryptjs con cost factor 10 (2^10 = 1024 iteraciones, balance seguridad/performance)
+  - sanitizeUser() elimina passwordHash de las respuestas (nunca exponer el hash)
+  - Controller delega toda la logica al Service, solo extrae datos del request
+  - Errores con statusCode se propagan via next() al errorHandler global
+  - Mensaje generico "Invalid credentials" para login fallido (no revelar si email existe)
+- **Siguiente paso:** Middleware de autenticacion (Milestone 2.3)
 
 ---

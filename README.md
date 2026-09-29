@@ -54,6 +54,30 @@ cd apps/frontend
 pnpm test
 ```
 
+## Autenticacion
+
+Se implemento autenticacion **stateful basada en sesion** con bcryptjs para hashing de contrasenas (cost factor 10).
+
+### Por que session-based y no JWT
+
+| Aspecto | Session (implementado) | JWT (alternativa) |
+|---|---|---|
+| Estado | Servidor almacena datos de usuario | Servidor no guarda estado |
+| Logout | Instantaneo (se borra sesion) | No se puede invalidar hasta expiracion |
+| Complejidad | Simple — localStorage + flag isActive | Requiere secret key, expiracion, refresh tokens |
+| Escalabilidad | Requiere sesion compartida en multiples servidores | Cualquier servidor verifica la firma |
+
+**Decision:** Para una prueba tecnica con un solo usuario a la vez, session-based es suficiente y mas simple de implementar. JWT seria over-engineering para este alcance.
+
+### Como se implementaria JWT
+
+1. Instalar `jsonwebtoken` y generar un `JWT_SECRET` como variable de entorno
+2. En login exitoso, firmar un token: `jwt.sign({ userId, email }, JWT_SECRET, { expiresIn: '1h' })`
+3. El cliente envia el token en header `Authorization: Bearer <token>` en cada request
+4. Crear middleware que verifica el token con `jwt.verify(token, JWT_SECRET)`
+5. Para refresh tokens: almacenar un token de larga duracion (7d) y emitir access tokens cortos (1h)
+6. Para invalidar tokens: implementar una allowlist/blocklist en Redis o base de datos
+
 ## Escenarios de SnailPay
 
 ### Cobro exitoso
@@ -79,6 +103,5 @@ jorge-1776/
 │   ├── backend/     # Express + TypeScript (MVC)
 │   └── frontend/    # React + TypeScript (Feature-based)
 ├── docker-compose.yml
-├── pnpm-workspace.yaml
 └── README.md
 ```
