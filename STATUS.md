@@ -23,6 +23,7 @@ _Pendiente — se actualizara al finalizar el proyecto._
 | 6 | bcryptjs sobre bcrypt | JS puro sin dependencias nativas, mas portable, mismo resultado | 1 |
 | 7 | Vitest sobre Jest | Integracion nativa con Vite, mas rapido, API compatible | 1 |
 | 8 | Session-based auth sobre JWT | Prueba tecnica con 1 usuario, logout instantaneo, menor complejidad. JWT requiere secret key, refresh tokens y no permite invalidacion facil | 6 |
+| 9 | MVC Active Record sobre Repository Pattern | Requerido por la prueba (MVC explicito). Preferencia personal es Repository Pattern (types + models + repositories + services) para mejor testabilidad y separacion de persistencia, pero over-engineering para este scope | 7 |
 
 ---
 
@@ -177,5 +178,19 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - Errores con statusCode se propagan via next() al errorHandler global
   - Mensaje generico "Invalid credentials" para login fallido (no revelar si email existe)
 - **Siguiente paso:** Middleware de autenticacion (Milestone 2.3)
+
+### Commit 7: Backend auth middleware
+- **Fecha:** 2026-09-29
+- **Branch:** feature/backend-auth-middleware
+- **Descripcion:** Middleware de autenticacion con session tokens y endpoint de logout
+- **Archivos modificados:** src/middleware/auth.ts, src/models/session.ts, src/services/auth.ts, src/controllers/auth.ts, src/routes/auth.ts, src/types/index.ts, data/sessions.json
+- **Decisiones tomadas:**
+  - Session tokens como UUID v4 almacenados en sessions.json (stateful)
+  - Middleware authenticate() valida token en header Authorization: Bearer
+  - Login y register ahora retornan { user, token } para que el cliente guarde el token
+  - Endpoint POST /api/auth/logout para invalidar sesiones
+  - SessionModel con CRUD: create, findByToken, delete, deleteByUserId
+  - AuthRequest interface extiende Request con userId para controllers protegidos
+- **Siguiente paso:** SnailPay mock payment service (Milestone 2.4)
 
 ---

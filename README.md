@@ -78,6 +78,55 @@ Se implemento autenticacion **stateful basada en sesion** con bcryptjs para hash
 5. Para refresh tokens: almacenar un token de larga duracion (7d) y emitir access tokens cortos (1h)
 6. Para invalidar tokens: implementar una allowlist/blocklist en Redis o base de datos
 
+## Arquitectura de datos — MVC vs Repository Pattern
+
+Se implemento **MVC tradicional (Active Record)** donde el model contiene tanto la estructura de datos como los metodos de persistencia (CRUD). Esta decision se tomo porque la prueba de SISU requiere explicitamente "MVC pattern".
+
+### Como se desglosaria con Repository Pattern (preferencia personal)
+
+En un proyecto personal o a mayor escala, se prefiera separar responsabilidades en mas capas:
+
+```
+types/        → Interfaces puras (solo estructura, sin comportamiento)
+models/       → Definicion del objeto (schema, validacion de forma)
+repositories/ → Acceso a datos (CRUD contra DB/JSON/file)
+services/     → Logica de negocio (reglas, validaciones, orquestacion)
+controllers/  → HTTP request/response (extrae datos, llama service, retorna)
+```
+
+Ejemplo con User:
+
+```typescript
+// types/user.ts — interfaz pura
+interface User { id: string; email: string; ... }
+
+// repositories/user.repository.ts — solo acceso a datos
+class UserRepository {
+  create(data: User): User { /* escribe a DB */ }
+  findByEmail(email: string): User | null { /* lee de DB */ }
+}
+
+// services/auth.service.ts — logica de negocio
+class AuthService {
+  constructor(private userRepo: UserRepository) {}
+  async register(email: string, password: string) {
+    // valida email unico, hashea password, llama repo.create()
+  }
+}
+```
+
+### Comparacion
+
+| Aspecto | MVC Active Record (implementado) | Repository Pattern (preferencia personal) |
+|---|---|---|
+| Archivos por entidad | 2 (type + model) | 4 (type + model + repository + service) |
+| Testabilidad | Model acoplado a persistencia | Repository mockeable, service testeable en aislamiento |
+| Cambio de persistencia | Modificar cada model | Cambiar solo el repository (inyeccion de dependencias) |
+| Complejidad | Menos abstraccion | Mas capas pero mas flexible |
+| Ideal para | Apps pequenas, prototipos, pruebas tecnicas | Apps medianas-grandes, equipos grandes |
+
+**Nota:** Para esta prueba tecnica, MVC es la decision correcta por scope y requerimientos. En un proyecto real se usaria Repository Pattern con inyeccion de dependencias para mejor testabilidad y separacion de preocupaciones.
+
 ## Escenarios de SnailPay
 
 ### Cobro exitoso
