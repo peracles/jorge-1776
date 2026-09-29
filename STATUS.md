@@ -263,4 +263,19 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - Lazy initialization en useState mantiene el fix de React 19 (sin cascading renders)
 - **Siguiente paso:** Registration form con Zod validation (Milestone 3.3)
 
+### Commit 13: Frontend registration form
+- **Fecha:** 2026-09-29
+- **Branch:** feature/frontend-registration
+- **Descripcion:** Formulario de registro con validacion Zod, react-hook-form y conexion a API backend
+- **Archivos modificados:** src/components/auth/RegisterForm.tsx, src/features/auth/pages/RegisterPage.tsx
+- **Decisiones tomadas:**
+  - RegisterForm como componente independiente en components/auth/ (reutilizable, testeable)
+  - Zod schema con refine() para validar que passwords match (validacion cross-field)
+  - react-hook-form para manejo de estado del formulario (onChange validation, submit handling)
+  - z.infer<typeof schema> para inferir tipos TypeScript desde el schema de Zod (single source of truth)
+  - Estados: loading (disabled button), error (mensaje rojo), success (redirect via login())
+  - RegisterPage integra el form + link a login (navegacion entre auth pages)
+  - apiFetch reutiliza el client existente para POST /api/auth/register
+- **Siguiente paso:** Login form (Milestone 3.4)
+
 ---
