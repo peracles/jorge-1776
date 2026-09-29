@@ -3,6 +3,7 @@ import cors from "cors";
 import { config } from "./config/index.js";
 import healthRouter from "./routes/health.js";
 import authRouter from "./routes/auth.js";
+import snailpayRouter from "./routes/snailpay.js";
 import { errorHandler } from "./middleware/error.js";
 
 const app: Express = express();
@@ -12,6 +13,7 @@ app.use(express.json());
 
 app.use("/api", healthRouter);
 app.use("/api", authRouter);
+app.use("/api", snailpayRouter);
 
 app.use(errorHandler);
 
