@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { SessionModel } from "../models/session.js";
 import { UserModel } from "../models/user.js";
+import { config } from "../config/index.js";
 
 export interface AuthRequest extends Request {
   userId?: string;
@@ -17,6 +18,14 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
   const session = SessionModel.findByToken(token);
   if (!session) {
     res.status(401).json({ error: "Invalid or expired session" });
+    return;
+  }
+
+  const sessionAgeMs = Date.now() - new Date(session.createdAt).getTime();
+  const maxAgeMs = config.sessionDurationHours * 60 * 60 * 1000;
+  if (sessionAgeMs > maxAgeMs) {
+    SessionModel.delete(token);
+    res.status(401).json({ error: "Session expired" });
     return;
   }
 
