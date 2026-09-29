@@ -11,21 +11,14 @@ import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../lib/api";
 import type { AuthResponse } from "../../types";
 
-const registerSchema = z
-  .object({
-    fullName: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Invalid email format"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+const loginSchema = z.object({
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(1, "Password is required"),
+});
 
-type RegisterFormData = z.infer<typeof registerSchema>;
+type LoginFormData = z.infer<typeof loginSchema>;
 
-export function RegisterForm() {
+export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { login, isAuthenticated } = useAuth();
@@ -41,25 +34,21 @@ export function RegisterForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
   });
 
-  async function onSubmit(data: RegisterFormData) {
+  async function onSubmit(data: LoginFormData) {
     setError(null);
     setLoading(true);
     try {
-      const response = await apiFetch<AuthResponse>("/auth/register", {
+      const response = await apiFetch<AuthResponse>("/auth/login", {
         method: "POST",
-        body: JSON.stringify({
-          fullName: data.fullName,
-          email: data.email,
-          password: data.password,
-        }),
+        body: JSON.stringify(data),
       });
       login(response.user, response.token);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      setError(err instanceof Error ? err.message : "Login failed");
     } finally {
       setLoading(false);
     }
@@ -68,17 +57,11 @@ export function RegisterForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Create account</CardTitle>
-        <CardDescription>Sign up to start betting on snail races</CardDescription>
+        <CardTitle>Sign in</CardTitle>
+        <CardDescription>Welcome back to Snail Racing</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Full name</Label>
-            <Input id="fullName" {...register("fullName")} placeholder="Jorge Perales" />
-            {errors.fullName && <p className="text-sm text-red-500">{errors.fullName.message}</p>}
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" {...register("email")} placeholder="jorge@email.com" />
@@ -91,16 +74,10 @@ export function RegisterForm() {
             {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm password</Label>
-            <Input id="confirmPassword" type="password" {...register("confirmPassword")} placeholder="••••••" />
-            {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
-          </div>
-
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Creating account..." : "Sign up"}
+            {loading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
       </CardContent>

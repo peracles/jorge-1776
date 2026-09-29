@@ -278,4 +278,17 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - apiFetch reutiliza el client existente para POST /api/auth/register
 - **Siguiente paso:** Login form (Milestone 3.4)
 
+### Commit 14: Frontend login form
+- **Fecha:** 2026-09-29
+- **Branch:** feature/frontend-login
+- **Descripcion:** Formulario de login con validacion Zod y conexion a API backend
+- **Archivos modificados:** src/components/auth/LoginForm.tsx, src/features/auth/pages/LoginPage.tsx
+- **Decisiones tomadas:**
+  - LoginForm sigue mismo patron que RegisterForm (react-hook-form + zodResolver)
+  - Schema mas simple que registro: solo email + password (sin confirmacion)
+  - Login exitoso llama a login(user, token) del AuthContext → guarda en localStorage
+  - LoginPage integra el form + link a registro (navegacion bidireccional entre auth pages)
+  - apiFetch ya maneja token automaticamente y redirect en 401
+- **Siguiente paso:** Dashboard layout (Milestone 3.5)
+
 ---
