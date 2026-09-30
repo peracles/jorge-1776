@@ -45,13 +45,102 @@ docker-compose up --build
 ### Backend
 ```bash
 cd apps/backend
-pnpm test
+pnpm test              # Todos los tests
+pnpm vitest            # Modo watch (re-ejecuta al guardar)
+pnpm vitest run tests/unit/auth.service.test.ts    # Un archivo especifico
 ```
 
 ### Frontend
 ```bash
 cd apps/frontend
 pnpm test
+```
+
+---
+
+## Documentacion de pruebas
+
+### Backend — Unit Tests
+
+#### AuthService (8 tests)
+| Test | Que verifica | Como probarlo |
+|---|---|---|
+| `should create a new user and return user + token` | Registro exitoso retorna user sin passwordHash + token | `pnpm vitest run tests/unit/auth.service.test.ts -t "create a new user"` |
+| `should throw ConflictError if email already exists` | Email duplicado lanza error 409 | `pnpm vitest run tests/unit/auth.service.test.ts -t "ConflictError"` |
+| `should hash the password with bcrypt` | Password se guarda hasheado con formato `$2a$10$...` | `pnpm vitest run tests/unit/auth.service.test.ts -t "hash the password"` |
+| `should return user + token with correct credentials` | Login exitoso con credenciales correctas | `pnpm vitest run tests/unit/auth.service.test.ts -t "correct credentials"` |
+| `should throw AuthenticationError with wrong password` | Password incorrecto lanza error 401 | `pnpm vitest run tests/unit/auth.service.test.ts -t "wrong password"` |
+| `should throw AuthenticationError with non-existent email` | Email inexistente lanza error 401 | `pnpm vitest run tests/unit/auth.service.test.ts -t "non-existent email"` |
+| `should delete the session` | Logout elimina sesion del store | `pnpm vitest run tests/unit/auth.service.test.ts -t "delete the session"` |
+| `should throw NotFoundError for invalid token` | Token invalido lanza error 404 | `pnpm vitest run tests/unit/auth.service.test.ts -t "invalid token"` |
+
+#### SnailPayService (7 tests)
+| Test | Que verifica | Como probarlo |
+|---|---|---|
+| `should approve payment with valid card data` | Tarjeta `1234123412341234`, CVV `543`, exp `12/26` → approved | `pnpm vitest run tests/unit/snailpay.service.test.ts -t "approve payment"` |
+| `should reject payment with wrong card number` | Tarjeta diferente → rejected "Card declined" | `pnpm vitest run tests/unit/snailpay.service.test.ts -t "wrong card number"` |
+| `should reject payment with wrong CVV` | CVV diferente a `543` → rejected "Invalid CVV" | `pnpm vitest run tests/unit/snailpay.service.test.ts -t "wrong CVV"` |
+| `should reject payment with wrong expiry date` | Fecha diferente a `12/26` → rejected "Card expired" | `pnpm vitest run tests/unit/snailpay.service.test.ts -t "wrong expiry"` |
+| `should reject payment with invalid amount` | Monto <= 0 → rejected "Invalid amount" | `pnpm vitest run tests/unit/snailpay.service.test.ts -t "invalid amount"` |
+| `should throw SystemError when simulateSystemError is true` | Flag system_error → lanza error 500 | `pnpm vitest run tests/unit/snailpay.service.test.ts -t "SystemError"` |
+| `should generate unique id and reference for each payment` | Cada pago genera id y reference unicos | `pnpm vitest run tests/unit/snailpay.service.test.ts -t "unique id"` |
+
+### Backend — Integration Tests
+
+#### Auth Endpoints (8 tests)
+| Test | Que verifica | Como probarlo |
+|---|---|---|
+| `should register a new user` | POST /api/auth/register → 201 con user + token | `pnpm vitest run tests/integration/auth.test.ts -t "register a new user"` |
+| `should return 409 for duplicate email` | Email duplicado → 409 | `pnpm vitest run tests/integration/auth.test.ts -t "409 for duplicate"` |
+| `should return 400 for invalid data` | Datos invalidos (email sin formato, password corto) → 400 | `pnpm vitest run tests/integration/auth.test.ts -t "400 for invalid"` |
+| `should login with correct credentials` | POST /api/auth/login → 200 con user + token | `pnpm vitest run tests/integration/auth.test.ts -t "correct credentials"` |
+| `should return 401 for wrong password` | Password incorrecto → 401 | `pnpm vitest run tests/integration/auth.test.ts -t "wrong password"` |
+| `should return 401 for non-existent email` | Email inexistente → 401 | `pnpm vitest run tests/integration/auth.test.ts -t "non-existent email"` |
+| `should logout successfully` | POST /api/auth/logout con token → 200 | `pnpm vitest run tests/integration/auth.test.ts -t "logout successfully"` |
+| `should return 404 without token` | Logout sin token → 404 (session not found) | `pnpm vitest run tests/integration/auth.test.ts -t "404 without token"` |
+
+#### SnailPay Endpoint (5 tests)
+| Test | Que verifica | Como probarlo |
+|---|---|---|
+| `should process approved payment` | Pago con tarjeta valida → 200 approved | `pnpm vitest run tests/integration/snailpay.test.ts -t "approved payment"` |
+| `should reject payment with wrong card` | Tarjeta invalida → 200 rejected | `pnpm vitest run tests/integration/snailpay.test.ts -t "wrong card"` |
+| `should return 500 for system error` | Header `X-SnailPay-Simulate: system_error` → 500 | `pnpm vitest run tests/integration/snailpay.test.ts -t "system error"` |
+| `should return 401 without auth token` | Request sin token → 401 | `pnpm vitest run tests/integration/snailpay.test.ts -t "401 without auth"` |
+| `should return 400 for invalid data` | Datos invalidos (cardNumber corto, amount negativo) → 400 | `pnpm vitest run tests/integration/snailpay.test.ts -t "400 for invalid"` |
+
+### Escenarios de prueba manual
+
+Para probar manualmente con curl o Postman:
+
+```bash
+# 1. Registrar usuario
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"fullName":"Jorge","email":"jorge@test.com","password":"Password1!"}'
+
+# 2. Login (copiar el token de la respuesta)
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"jorge@test.com","password":"Password1!"}'
+
+# 3. Pago exitoso (usar token del login)
+curl -X POST http://localhost:3000/api/snailpay/process \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <TOKEN>" \
+  -d '{"cardNumber":"1234123412341234","expiryDate":"12/26","cvv":"543","fullName":"Jorge Perales","amount":100,"payerId":"<USER_ID>","payerEmail":"jorge@test.com"}'
+
+# 4. Pago rechazado (tarjeta incorrecta)
+curl -X POST http://localhost:3000/api/snailpay/process \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <TOKEN>" \
+  -d '{"cardNumber":"9999999999999999","expiryDate":"12/26","cvv":"543","fullName":"Jorge Perales","amount":100,"payerId":"<USER_ID>","payerEmail":"jorge@test.com"}'
+
+# 5. Error de sistema
+curl -X POST http://localhost:3000/api/snailpay/process \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "X-SnailPay-Simulate: system_error" \
+  -d '{"cardNumber":"1234123412341234","expiryDate":"12/26","cvv":"543","fullName":"Jorge Perales","amount":100,"payerId":"<USER_ID>","payerEmail":"jorge@test.com"}'
 ```
 
 ## Autenticacion
