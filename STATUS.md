@@ -355,4 +355,17 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - Separacion de responsabilidades: login (auth completa) vs updateUser (solo datos)
 - **Siguiente paso:** E2E flow verification (Milestone 4.1)
 
+### Commit 20: Backend unit and integration tests
+- **Fecha:** 2026-09-30
+- **Branch:** feature/backend-tests
+- **Descripcion:** Tests unitarios para AuthService y SnailPayService, tests de integracion para endpoints
+- **Archivos modificados:** tests/unit/auth.service.test.ts, tests/unit/snailpay.service.test.ts, tests/integration/auth.test.ts, tests/integration/snailpay.test.ts, vitest.config.ts, src/app.ts
+- **Decisiones tomadas:**
+  - 28 tests totales: 15 unitarios + 13 de integracion
+  - Vitest configurado con fileParallelism: false para evitar race conditions en archivos JSON
+  - app.listen() condicional con NODE_ENV !== "test" para evitar conflictos de puerto
+  - Cada test resetea los stores (users.json, sessions.json) en beforeEach
+  - SnailPay integration tests incluyen payerId y payerEmail requeridos por el schema
+- **Siguiente paso:** Frontend tests (Milestone 5.2)
+
 ---

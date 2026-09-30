@@ -18,8 +18,10 @@ app.use("/api", snailpayRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(config.port, () => {
-  console.log(`Backend running on http://localhost:${config.port}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(config.port, () => {
+    console.log(`Backend running on http://localhost:${config.port}`);
+  });
+}
 
 export default app;
