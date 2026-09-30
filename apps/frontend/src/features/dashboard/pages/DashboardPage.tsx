@@ -2,10 +2,14 @@ import { useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
 import { BalanceCard } from "../../../components/dashboard/BalanceCard";
+import { DonutChart } from "../../../components/dashboard/DonutChart";
+import { BarChart } from "../../../components/dashboard/BarChart";
+import { getBetStats, mockRaceResults } from "../../../components/dashboard/mockData";
 
 export function DashboardPage() {
   const { user } = useAuth();
   const [showDeposit, setShowDeposit] = useState(false);
+  const betStats = getBetStats();
 
   return (
     <div className="space-y-6">
@@ -32,6 +36,26 @@ export function DashboardPage() {
           balance={user?.balance ?? 0}
           onDeposit={() => setShowDeposit(true)}
         />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <Card className="border-2 border-[var(--border)]">
+          <CardHeader>
+            <CardTitle className="text-[var(--foreground)]">Bet History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DonutChart data={betStats} />
+          </CardContent>
+        </Card>
+
+        <Card className="border-2 border-[var(--border)]">
+          <CardHeader>
+            <CardTitle className="text-[var(--foreground)]">Race Results</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <BarChart data={mockRaceResults} />
+          </CardContent>
+        </Card>
       </div>
 
       {showDeposit && (
