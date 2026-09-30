@@ -12,9 +12,8 @@ export function DashboardPage() {
   const [showPayment, setShowPayment] = useState(false);
   const betStats = getBetStats();
 
-  function handlePaymentSuccess(amount: number) {
+  function handlePaymentSuccess() {
     setShowPayment(false);
-    alert(`Payment of $${amount.toFixed(2)} approved!`);
   }
 
   return (

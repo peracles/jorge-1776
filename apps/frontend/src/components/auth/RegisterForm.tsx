@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -31,7 +32,6 @@ const registerSchema = z
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -51,7 +51,6 @@ export function RegisterForm() {
   });
 
   async function onSubmit(data: RegisterFormData) {
-    setError(null);
     setLoading(true);
     try {
       const response = await apiFetch<AuthResponse>("/auth/register", {
@@ -63,8 +62,13 @@ export function RegisterForm() {
         }),
       });
       login(response.user, response.token);
+      toast.success("Account created!", {
+        description: `Welcome, ${response.user.fullName}!`,
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      toast.error("Registration failed", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
     } finally {
       setLoading(false);
     }
@@ -101,8 +105,6 @@ export function RegisterForm() {
             <Input id="confirmPassword" type="password" {...register("confirmPassword")} placeholder="••••••" />
             {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
           </div>
-
-          {error && <p className="text-sm text-red-500">{error}</p>}
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Creating account..." : "Sign up"}

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -19,7 +20,6 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -39,7 +39,6 @@ export function LoginForm() {
   });
 
   async function onSubmit(data: LoginFormData) {
-    setError(null);
     setLoading(true);
     try {
       const response = await apiFetch<AuthResponse>("/auth/login", {
@@ -47,8 +46,13 @@ export function LoginForm() {
         body: JSON.stringify(data),
       });
       login(response.user, response.token);
+      toast.success("Welcome back!", {
+        description: `Signed in as ${response.user.email}`,
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      toast.error("Login failed", {
+        description: err instanceof Error ? err.message : "Invalid credentials",
+      });
     } finally {
       setLoading(false);
     }
@@ -73,8 +77,6 @@ export function LoginForm() {
             <Input id="password" type="password" {...register("password")} placeholder="••••••" />
             {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
           </div>
-
-          {error && <p className="text-sm text-red-500">{error}</p>}
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Signing in..." : "Sign in"}
