@@ -342,4 +342,17 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - Tipos SnailPayChargeRequest/Response agregados al frontend
 - **Siguiente paso:** E2E flow verification (Milestone 4.1)
 
+### Commit 19: Balance update integration
+- **Fecha:** 2026-09-29
+- **Branch:** feature/snailpay-form
+- **Descripcion:** Backend actualiza balance en users.json y frontend refresca usuario via GET /auth/me
+- **Archivos modificados:** src/controllers/snailpay.ts, src/controllers/auth.ts, src/routes/auth.ts, src/stores/auth-context.ts, src/stores/AuthProvider.tsx, src/components/snailpay/PaymentForm.tsx
+- **Decisiones tomadas:**
+  - SnailPayController llama UserModel.updateBalance() cuando pago es aprobado
+  - Nuevo endpoint GET /api/auth/me retorna datos actualizados del usuario
+  - AuthContext agrega metodo updateUser() para actualizar solo el usuario sin tocar el token
+  - PaymentForm usa updateUser() en vez de login() para refrescar balance despues del pago
+  - Separacion de responsabilidades: login (auth completa) vs updateUser (solo datos)
+- **Siguiente paso:** E2E flow verification (Milestone 4.1)
+
 ---
