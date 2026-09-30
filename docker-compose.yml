@@ -7,6 +7,7 @@ services:
       - "3000:3000"
     volumes:
       - ./apps/backend/src:/app/src
+      - ./apps/backend/data:/app/data
       - /app/node_modules
     environment:
       - NODE_ENV=development
