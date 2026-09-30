@@ -4,23 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui
 import { BalanceCard } from "../../../components/dashboard/BalanceCard";
 
 export function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [showDeposit, setShowDeposit] = useState(false);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-[var(--foreground)]">
-          Welcome, {user?.fullName}
-        </h2>
-        <button
-          onClick={logout}
-          className="rounded-full border-2 border-[var(--border)] bg-[var(--card)] px-6 py-2 text-sm font-medium text-[var(--foreground)] transition-all hover:bg-[var(--primary)] hover:text-[var(--primary-foreground)]"
-        >
-          Logout
-        </button>
-      </div>
-
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Card className="border-2 border-[var(--border)]">
           <CardHeader>
