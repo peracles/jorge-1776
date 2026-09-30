@@ -368,4 +368,17 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - SnailPay integration tests incluyen payerId y payerEmail requeridos por el schema
 - **Siguiente paso:** Frontend tests (Milestone 5.2)
 
+### Commit 21: Frontend unit and component tests
+- **Fecha:** 2026-09-30
+- **Branch:** feature/frontend-tests
+- **Descripcion:** Tests unitarios para schemas Zod y tests de componentes para auth forms y charts
+- **Archivos modificados:** tests/unit/validators.test.ts, tests/components/LoginForm.test.tsx, tests/components/RegisterForm.test.tsx, tests/components/DonutChart.test.tsx, tests/components/BarChart.test.tsx, vite.config.ts, package.json
+- **Decisiones tomadas:**
+  - 23 tests frontend: 11 unitarios (Zod) + 12 componentes
+  - Vitest configurado con jsdom environment y fileParallelism: false
+  - Componentes auth envueltos con MemoryRouter + AuthProvider para tests
+  - Charts testean renderizado de contenedor, no SVG interno (limitacion de jsdom)
+  - Schemas Zod replicados en tests para aislamiento (no exportados desde componentes)
+- **Siguiente paso:** README documentation (Milestone 6.1)
+
 ---

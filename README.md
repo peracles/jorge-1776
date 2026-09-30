@@ -143,6 +143,53 @@ curl -X POST http://localhost:3000/api/snailpay/process \
   -d '{"cardNumber":"1234123412341234","expiryDate":"12/26","cvv":"543","fullName":"Jorge Perales","amount":100,"payerId":"<USER_ID>","payerEmail":"jorge@test.com"}'
 ```
 
+### Frontend — Unit Tests
+
+#### Zod Validators (11 tests)
+| Test | Que verifica | Como probarlo |
+|---|---|---|
+| `should accept valid registration data` | Datos de registro validos pasan la validacion | `pnpm vitest run tests/unit/validators.test.ts -t "accept valid registration"` |
+| `should reject fullName less than 2 characters` | Nombre muy corto → invalido | `pnpm vitest run tests/unit/validators.test.ts -t "fullName less than 2"` |
+| `should reject invalid email format` | Email sin formato valido → invalido | `pnpm vitest run tests/unit/validators.test.ts -t "invalid email format"` |
+| `should reject password less than 8 characters` | Password corto → invalido | `pnpm vitest run tests/unit/validators.test.ts -t "password less than 8"` |
+| `should reject password without uppercase letter` | Sin mayuscula → invalido | `pnpm vitest run tests/unit/validators.test.ts -t "without uppercase"` |
+| `should reject password without number` | Sin numero → invalido | `pnpm vitest run tests/unit/validators.test.ts -t "without number"` |
+| `should reject password without special character` | Sin caracter especial → invalido | `pnpm vitest run tests/unit/validators.test.ts -t "without special character"` |
+| `should reject when passwords do not match` | Passwords diferentes → invalido | `pnpm vitest run tests/unit/validators.test.ts -t "passwords do not match"` |
+| `should accept valid login data` | Datos de login validos pasan la validacion | `pnpm vitest run tests/unit/validators.test.ts -t "accept valid login"` |
+| `should reject invalid email format` (login) | Email invalido en login → invalido | `pnpm vitest run tests/unit/validators.test.ts -t "reject invalid email" -t "loginSchema"` |
+| `should reject empty password` | Password vacio en login → invalido | `pnpm vitest run tests/unit/validators.test.ts -t "empty password"` |
+
+### Frontend — Component Tests
+
+#### LoginForm (3 tests)
+| Test | Que verifica | Como probarlo |
+|---|---|---|
+| `should render email and password fields` | Formulario tiene campos de email y password | `pnpm vitest run tests/components/LoginForm.test.tsx -t "email and password fields"` |
+| `should render sign in button` | Boton de sign in esta presente | `pnpm vitest run tests/components/LoginForm.test.tsx -t "sign in button"` |
+| `should render link to register page` | Texto de bienvenida visible | `pnpm vitest run tests/components/LoginForm.test.tsx -t "link to register"` |
+
+#### RegisterForm (3 tests)
+| Test | Que verifica | Como probarlo |
+|---|---|---|
+| `should render all form fields` | 4 campos: nombre, email, password, confirm password | `pnpm vitest run tests/components/RegisterForm.test.tsx -t "all form fields"` |
+| `should render sign up button` | Boton de sign up esta presente | `pnpm vitest run tests/components/RegisterForm.test.tsx -t "sign up button"` |
+| `should render create account title` | Titulo del formulario visible | `pnpm vitest run tests/components/RegisterForm.test.tsx -t "create account title"` |
+
+#### DonutChart (3 tests)
+| Test | Que verifica | Como probarlo |
+|---|---|---|
+| `should render without crashing` | Componente se renderiza sin errores | `pnpm vitest run tests/components/DonutChart.test.tsx -t "render without crashing"` |
+| `should render responsive container` | Contenedor de Recharts presente | `pnpm vitest run tests/components/DonutChart.test.tsx -t "responsive container"` |
+| `should render with empty data` | Componente maneja datos vacios | `pnpm vitest run tests/components/DonutChart.test.tsx -t "empty data"` |
+
+#### BarChart (3 tests)
+| Test | Que verifica | Como probarlo |
+|---|---|---|
+| `should render without crashing` | Componente se renderiza sin errores | `pnpm vitest run tests/components/BarChart.test.tsx -t "render without crashing"` |
+| `should render responsive container` | Contenedor de Recharts presente | `pnpm vitest run tests/components/BarChart.test.tsx -t "responsive container"` |
+| `should render with empty data` | Componente maneja datos vacios | `pnpm vitest run tests/components/BarChart.test.tsx -t "empty data"` |
+
 ## Autenticacion
 
 Se implemento autenticacion **stateful basada en sesion** con bcryptjs para hashing de contrasenas (cost factor 10).
