@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -21,12 +22,11 @@ const paymentSchema = z.object({
 type PaymentFormData = z.infer<typeof paymentSchema>;
 
 interface PaymentFormProps {
-  onSuccess: (amount: number) => void;
+  onSuccess: () => void;
   onClose: () => void;
 }
 
 export function PaymentForm({ onSuccess, onClose }: PaymentFormProps) {
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { user, updateUser } = useAuth();
 
@@ -42,7 +42,6 @@ export function PaymentForm({ onSuccess, onClose }: PaymentFormProps) {
   });
 
   async function onSubmit(data: PaymentFormData) {
-    setError(null);
     setLoading(true);
     try {
       const response = await apiFetch<SnailPayChargeResponse>("/snailpay/process", {
@@ -57,12 +56,19 @@ export function PaymentForm({ onSuccess, onClose }: PaymentFormProps) {
       if (response.status === "approved") {
         const updatedUser = await apiFetch<User>("/auth/me");
         updateUser(updatedUser);
-        onSuccess(data.amount);
+        toast.success("Payment approved!", {
+          description: `$${data.amount.toFixed(2)} added to your balance`,
+        });
+        onSuccess();
       } else {
-        setError(response.statusDetail);
+        toast.error("Payment rejected", {
+          description: response.statusDetail,
+        });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Payment failed");
+      toast.error("Payment failed", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
     } finally {
       setLoading(false);
     }
@@ -106,8 +112,6 @@ export function PaymentForm({ onSuccess, onClose }: PaymentFormProps) {
             <Input id="amount" type="number" step="0.01" {...register("amount", { valueAsNumber: true })} placeholder="100.00" />
             {errors.amount && <p className="text-sm text-red-500">{errors.amount.message}</p>}
           </div>
-
-          {error && <p className="text-sm text-red-500">{error}</p>}
 
           <div className="flex gap-4">
             <Button type="submit" className="flex-1" disabled={loading}>
