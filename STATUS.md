@@ -291,4 +291,16 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - apiFetch ya maneja token automaticamente y redirect en 401
 - **Siguiente paso:** Dashboard layout (Milestone 3.5)
 
+### Commit 15 (fix): Navigation after login and register
+- **Fecha:** 2026-09-29
+- **Branch:** feature/frontend-login
+- **Descripcion:** Fix de navegacion post-auth usando useEffect con isAuthenticated
+- **Archivos modificados:** src/components/auth/LoginForm.tsx, src/components/auth/RegisterForm.tsx
+- **Decisiones tomadas:**
+  - navigate() directo despues de login() no funciona porque React no ha procesado el cambio de estado del Context
+  - Solucion: useEffect que observa isAuthenticated y navega cuando cambia a true
+  - Mismo patron aplicado a RegisterForm y LoginForm para consistencia
+  - El Navigate de App.tsx en ruta "/" no es suficiente porque el usuario esta en /login o /register, no en /
+- **Siguiente paso:** Dashboard layout (Milestone 3.5)
+
 ---
