@@ -316,4 +316,30 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - Formato de moneda con toFixed(2) para consistencia visual
 - **Siguiente paso:** Dashboard charts (Milestone 3.6)
 
+### Commit 17: Dashboard charts
+- **Fecha:** 2026-09-29
+- **Branch:** feature/dashboard-charts
+- **Descripcion:** Graficas de dona y barras con Recharts para historial de apuestas y resultados de carreras
+- **Archivos modificados:** src/components/dashboard/DonutChart.tsx, src/components/dashboard/BarChart.tsx, src/components/dashboard/mockData.ts, src/features/dashboard/pages/DashboardPage.tsx
+- **Decisiones tomadas:**
+  - DonutChart muestra apuestas ganadas vs perdidas (azul/rojo)
+  - BarChart muestra victorias por caracol con colores individuales
+  - Mock data con 6 caracoles y 6 apuestas simuladas
+  - Datos congruentes: suma de victorias = 6 (una por carrera)
+- **Siguiente paso:** SnailPay payment form (Milestone 3.7)
+
+### Commit 18: SnailPay payment form
+- **Fecha:** 2026-09-29
+- **Branch:** feature/snailpay-form
+- **Descripcion:** Formulario de pago SnailPay con validacion Zod e integracion a API backend
+- **Archivos modificados:** src/components/snailpay/PaymentForm.tsx, src/types/index.ts, src/features/dashboard/pages/DashboardPage.tsx
+- **Decisiones tomadas:**
+  - PaymentForm con campos: cardNumber, expiryDate, cvv, fullName, amount
+  - Validaciones Zod: 16 digitos tarjeta, formato MM/YY, 3 digitos CVV, monto positivo
+  - Integracion con POST /api/snailpay/process del backend
+  - Manejo de respuestas: approved (exitoso), rejected (error transaccion), error (sistema)
+  - Alerta temporal para confirmar pago exitoso (se mejorara con toast en Milestone 4.3)
+  - Tipos SnailPayChargeRequest/Response agregados al frontend
+- **Siguiente paso:** E2E flow verification (Milestone 4.1)
+
 ---

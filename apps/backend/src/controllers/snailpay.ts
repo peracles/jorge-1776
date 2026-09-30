@@ -3,6 +3,7 @@ import { SnailPayService } from "../services/snailpay.js";
 import type { AuthRequest } from "../middleware/auth.js";
 import { snailpaySchema } from "../validators/snailpay.js";
 import { ValidationError } from "../errors/index.js";
+import { UserModel } from "../models/user.js";
 
 export function processPayment(req: AuthRequest, res: Response, next: NextFunction) {
   try {
@@ -13,6 +14,11 @@ export function processPayment(req: AuthRequest, res: Response, next: NextFuncti
 
     const simulateSystemError = req.headers["x-snailpay-simulate"] === "system_error";
     const result = SnailPayService.processPayment(parsed.data, simulateSystemError);
+
+    if (result.status === "approved" && req.userId) {
+      UserModel.updateBalance(req.userId, parsed.data.amount);
+    }
+
     res.status(200).json(result);
   } catch (err) {
     next(err);
