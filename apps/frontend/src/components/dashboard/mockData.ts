@@ -19,10 +19,10 @@ export const mockBetHistory = [
 export const mockRaceResults = [
   { name: "Turbo", victories: 2, color: "#FF6B6B" },
   { name: "Flash", victories: 1, color: "#4ECDC4" },
-  { name: "Rayo", victories: 2, color: "#45B7D1" },
-  { name: "Veloz", victories: 0, color: "#96CEB4" },
+  { name: "Rayo", victories: 7, color: "#45B7D1" },
+  { name: "Veloz", victories: 2, color: "#96CEB4" },
   { name: "Bolt", victories: 1, color: "#FFEAA7" },
-  { name: "Speedy", victories: 0, color: "#DDA0DD" },
+  { name: "Speedy", victories: 3, color: "#DDA0DD" },
 ];
 
 export function getBetStats() {

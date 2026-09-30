@@ -2,7 +2,8 @@ import type { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.js";
 import type { AuthRequest } from "../middleware/auth.js";
 import { registerSchema, loginSchema } from "../validators/auth.js";
-import { ValidationError } from "../errors/index.js";
+import { ValidationError, NotFoundError } from "../errors/index.js";
+import { UserModel } from "../models/user.js";
 
 export async function register(req: Request, res: Response, next: NextFunction) {
   try {
@@ -38,6 +39,19 @@ export function logout(req: AuthRequest, res: Response, next: NextFunction) {
     const token = header?.slice(7) ?? "";
     AuthService.logout(token);
     res.status(200).json({ message: "Logged out successfully" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export function getMe(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const user = UserModel.findById(req.userId!);
+    if (!user) {
+      throw new NotFoundError("User");
+    }
+    const { passwordHash: _, ...safeUser } = user;
+    res.status(200).json(safeUser);
   } catch (err) {
     next(err);
   }

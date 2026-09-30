@@ -4,12 +4,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui
 import { BalanceCard } from "../../../components/dashboard/BalanceCard";
 import { DonutChart } from "../../../components/dashboard/DonutChart";
 import { BarChart } from "../../../components/dashboard/BarChart";
+import { PaymentForm } from "../../../components/snailpay/PaymentForm";
 import { getBetStats, mockRaceResults } from "../../../components/dashboard/mockData";
 
 export function DashboardPage() {
   const { user } = useAuth();
-  const [showDeposit, setShowDeposit] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
   const betStats = getBetStats();
+
+  function handlePaymentSuccess(amount: number) {
+    setShowPayment(false);
+    alert(`Payment of $${amount.toFixed(2)} approved!`);
+  }
 
   return (
     <div className="space-y-6">
@@ -34,7 +40,7 @@ export function DashboardPage() {
 
         <BalanceCard
           balance={user?.balance ?? 0}
-          onDeposit={() => setShowDeposit(true)}
+          onDeposit={() => setShowPayment(true)}
         />
       </div>
 
@@ -58,23 +64,11 @@ export function DashboardPage() {
         </Card>
       </div>
 
-      {showDeposit && (
-        <Card className="border-2 border-[var(--primary)]">
-          <CardHeader>
-            <CardTitle className="text-[var(--foreground)]">Deposit (SnailPay)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-[var(--muted-foreground)]">
-              Payment form will be implemented in Milestone 3.7
-            </p>
-            <button
-              onClick={() => setShowDeposit(false)}
-              className="mt-4 rounded-full border-2 border-[var(--border)] bg-[var(--card)] px-6 py-2 text-sm font-medium text-[var(--foreground)] transition-all hover:bg-[var(--primary)] hover:text-[var(--primary-foreground)]"
-            >
-              Close
-            </button>
-          </CardContent>
-        </Card>
+      {showPayment && (
+        <PaymentForm
+          onSuccess={handlePaymentSuccess}
+          onClose={() => setShowPayment(false)}
+        />
       )}
     </div>
   );
