@@ -303,4 +303,17 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - El Navigate de App.tsx en ruta "/" no es suficiente porque el usuario esta en /login o /register, no en /
 - **Siguiente paso:** Dashboard layout (Milestone 3.5)
 
+### Commit 16: Frontend dashboard structure
+- **Fecha:** 2026-09-29
+- **Branch:** feature/frontend-dashboard
+- **Descripcion:** Dashboard con cards de perfil y balance, boton de logout y placeholder de deposito
+- **Archivos modificados:** src/features/dashboard/pages/DashboardPage.tsx, src/components/dashboard/BalanceCard.tsx
+- **Decisiones tomadas:**
+  - DashboardPage usa grid de 2 columnas para Profile y Balance cards
+  - BalanceCard es componente separado para reutilizacion en otras vistas
+  - Boton de logout en el header del dashboard (ademas del del Header global)
+  - Modal de deposito es placeholder hasta Milestone 3.7 (SnailPay integration)
+  - Formato de moneda con toFixed(2) para consistencia visual
+- **Siguiente paso:** Dashboard charts (Milestone 3.6)
+
 ---
