@@ -216,7 +216,7 @@ Se implemento autenticacion **stateful basada en sesion** con bcryptjs para hash
 
 ## Arquitectura de datos — MVC vs Repository Pattern
 
-Se implemento **MVC tradicional (Active Record)** donde el model contiene tanto la estructura de datos como los metodos de persistencia (CRUD). Esta decision se tomo porque la prueba de SISU requiere explicitamente "MVC pattern".
+Se implemento **MVC tradicional (Active Record)** donde el model contiene tanto la estructura de datos como los metodos de persistencia (CRUD). Esta decision se tomo porque la prueba requiere explicitamente "MVC pattern".
 
 ### Como se desglosaria con Repository Pattern (preferencia personal)
 
@@ -285,6 +285,7 @@ class AuthService {
 | Documento | Descripcion |
 |---|---|
 | [Propuesta de base de datos](docs/propuesta-base-datos.md) | Diseno de schema PostgreSQL 17 + Prisma ORM, tablas, queries, migraciones y cambios necesarios en el backend para migrar de JSON store a base de datos relacional |
+| [Propuesta de despliegue](docs/propuesta-deploy.md) | Despliegue en AWS EC2 Free Tier con Nginx, PM2, Let's Encrypt y Cloudflare. Incluye nota sobre por que no se ejecuto el deploy real |
 
 ## Estructura del proyecto
 
@@ -294,7 +295,8 @@ jorge-1776/
 │   ├── backend/     # Express + TypeScript (MVC)
 │   └── frontend/    # React + TypeScript (Feature-based)
 ├── docs/
-│   └── propuesta-base-datos.md   # Propuesta PostgreSQL + Prisma
+│   ├── propuesta-base-datos.md   # Propuesta PostgreSQL + Prisma
+│   └── propuesta-deploy.md       # Propuesta deploy AWS Free Tier
 ├── docker-compose.yml
 └── README.md
 ```
