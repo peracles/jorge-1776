@@ -381,4 +381,21 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - Schemas Zod replicados en tests para aislamiento (no exportados desde componentes)
 - **Siguiente paso:** README documentation (Milestone 6.1)
 
+### Commit 22: Database proposal (Milestone 7.2)
+- **Fecha:** 2026-10-01
+- **Branch:** feature/database-proposal
+- **Descripcion:** Propuesta completa de base de datos PostgreSQL 17 + Prisma 6 ORM como solucion de persistencia real para reemplazar el JSON store actual
+- **Archivos modificados:** docs/propuesta-base-datos.md (nuevo), README.md (seccion documentacion adicional)
+- **Decisiones tomadas:**
+  - PostgreSQL 17 sobre MySQL/SQLite: ya instalado localmente, UUID nativo, JSONB, MVCC para concurrencia, riqueza de tipos
+  - Prisma 6 sobre TypeORM/Drizzle/Knex: genera tipos TypeScript automaticos desde schema, mejor DX, incluye Studio GUI, migraciones auto-generadas
+  - 6 tablas disenadas: users, sessions, transactions, snails, races, bets — con FKs, indices y constraints
+  - Schema de Prisma completo con relaciones, onDelete Cascade/Restrict/SetNull
+  - Queries de ejemplo para dashboard (donut chart, bar chart, estadisticas)
+  - Codigo antes/despues de UserModel y SessionModel mostrando la migracion de JSON store a Prisma Client
+  - prisma.$transaction() para atomicidad en SnailPay (garantiza consistencia entre transaccion y balance)
+  - Docker Compose actualizado con servicio postgres:17-alpine + healthcheck
+  - Fundamento teorico: normalizacion 3FN (Codd 1972), MVCC (Bernstein 1987), B-tree O(log n) (Knuth 1998), patron Data Mapper (Fowler 2002)
+- **Siguiente paso:** Deploy publico (Milestone 7.1) o PDF de respuesta (Milestone 6.3)
+
 ---
