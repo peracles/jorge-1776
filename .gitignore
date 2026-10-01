@@ -35,3 +35,6 @@ coverage/
 
 # Qwen
 .qwen/
+
+#Scripts
+scripts/
