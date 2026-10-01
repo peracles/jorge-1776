@@ -1,7 +1,7 @@
 # STATUS.md — Snail Racing Bets
 
 > Documento de seguimiento de avances. Se actualiza con cada commit.
-> Formato basado en los requerimientos del documento de respuesta de SISU Technologies.
+> Formato basado en los requerimientos del documento de respuesta tecnica.
 
 ---
 
@@ -397,5 +397,38 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - Docker Compose actualizado con servicio postgres:17-alpine + healthcheck
   - Fundamento teorico: normalizacion 3FN (Codd 1972), MVCC (Bernstein 1987), B-tree O(log n) (Knuth 1998), patron Data Mapper (Fowler 2002)
 - **Siguiente paso:** Deploy publico (Milestone 7.1) o PDF de respuesta (Milestone 6.3)
+
+### Commit 23: Technical response document (Milestone 6.3)
+- **Fecha:** 2026-10-01
+- **Branch:** fix/documentation
+- **Descripcion:** Documento de respuesta tecnica en formato DOCX con todas las secciones requeridas
+- **Archivos modificados:** docs/respuesta-tecnica.docx (nuevo), scripts/generate_pdf.py (nuevo)
+- **Decisiones tomadas:**
+  - Formato DOCX (editable) en lugar de PDF directo, para permitir edicion antes de conversion final
+  - Python con python-docx para generacion automatica del documento
+  - Arial 10pt, margenes estrechos (1.5cm superior/inferior, 2cm laterales) para optimizar espacio
+  - 11 secciones: resumen, decisiones, herramientas, uso de IA, pruebas, funcionalidades terminadas, funcionalidades pendientes, tiempo invertido, repositorio, arquitectura tecnica, propuesta de base de datos
+  - Script reutilizable (scripts/generate_pdf.py) para regenerar el documento si hay cambios
+  - Nombre generico "respuesta-tecnica" sin nombres de empresas por politicas de seguridad
+- **Siguiente paso:** Revision y edicion manual del documento, conversion a PDF cuando este completo
+
+### Commit 24: Deployment proposal (Milestone 7.1)
+- **Fecha:** 2026-10-01
+- **Branch:** feature/deployment-proposal
+- **Descripcion:** Propuesta completa de despliegue en AWS EC2 Free Tier con arquitectura Nginx + PM2 + Let's Encrypt + Cloudflare, incluyendo nota sobre por que no se ejecuto el deploy real
+- **Archivos modificados:** docs/propuesta-deploy.md (nuevo), README.md (seccion documentacion adicional)
+- **Decisiones tomadas:**
+  - AWS EC2 t2.micro Free Tier (12 meses gratis, 750 hrs/mes, 30 GB EBS) — costo $0/mes
+  - Nginx como reverse proxy: patron reactor (Schmidt 1996), O(1) por evento con epoll, ideal para Node.js
+  - PM2 como process manager — restart automatico, log aggregation, zero-downtime restarts
+  - Let's Encrypt con Certbot (ACME protocol, RFC 8555) — SSL gratuito con renovacion automatica
+  - Cloudflare DNS para registros A apuntando a IP publica de EC2
+  - Dockerfiles de produccion con multi-stage builds (imagen final mas pequena)
+  - docker-compose.production.yml para despliegue con Docker como alternativa a PM2
+  - CI/CD con GitHub Actions (appleboy/ssh-action) para deploy automatico en push a main
+  - Security Groups: solo puertos 22 (SSH restringido), 80, 443 — puerto 3000 no expuesto
+  - Nota explicativa: AWS tarda 3-5 dias habiles en activar cuenta nueva, incompatible con plazos de la prueba
+  - Alternativas evaluadas: Vercel+Railway, Render, Fly.io, DigitalOcean, Oracle Cloud — todas descartadas por costos ocultos o misma limitacion de tiempo
+- **Siguiente paso:** Revision final del documento de respuesta tecnica
 
 ---
