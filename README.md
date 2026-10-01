@@ -280,6 +280,12 @@ class AuthService {
 ### Error de sistema
 - Enviar header `X-SnailPay-Simulate: system_error` en la peticion
 
+## Documentacion adicional
+
+| Documento | Descripcion |
+|---|---|
+| [Propuesta de base de datos](docs/propuesta-base-datos.md) | Diseno de schema PostgreSQL 17 + Prisma ORM, tablas, queries, migraciones y cambios necesarios en el backend para migrar de JSON store a base de datos relacional |
+
 ## Estructura del proyecto
 
 ```
@@ -287,6 +293,8 @@ jorge-1776/
 ├── apps/
 │   ├── backend/     # Express + TypeScript (MVC)
 │   └── frontend/    # React + TypeScript (Feature-based)
+├── docs/
+│   └── propuesta-base-datos.md   # Propuesta PostgreSQL + Prisma
 ├── docker-compose.yml
 └── README.md
 ```
