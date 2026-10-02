@@ -429,6 +429,26 @@ _Pendiente — se actualizara al finalizar el proyecto._
   - Security Groups: solo puertos 22 (SSH restringido), 80, 443 — puerto 3000 no expuesto
   - Nota explicativa: AWS tarda 3-5 dias habiles en activar cuenta nueva, incompatible con plazos de la prueba
   - Alternativas evaluadas: Vercel+Railway, Render, Fly.io, DigitalOcean, Oracle Cloud — todas descartadas por costos ocultos o misma limitacion de tiempo
-- **Siguiente paso:** Revision final del documento de respuesta tecnica
+- **Siguiente paso:** Deploy real en AWS EC2
+
+### Commit 25: AWS deployment ejecutado (Milestone 7.1 completado)
+- **Fecha:** 2026-10-02
+- **Branch:** feature/aws-deployment
+- **Descripcion:** Deploy real ejecutado exitosamente en AWS EC2 t3.micro con subdominio snail.peracles.dev
+- **Archivos modificados:** docs/propuesta-deploy.md (eliminado), docs/deployment-guide.md (nuevo), README.md (actualizado), STATUS.md (actualizado), PLAN.md (actualizado)
+- **Decisiones tomadas:**
+  - EC2 t3.micro en lugar de t2.micro (t2 ya no disponible en Free Tier, t3 tiene 2 vCPU en lugar de 1)
+  - Subdominio snail.peracles.dev para no interferir con landing page existente en peracles.dev
+  - Nginx con server block para HTTP (80) y HTTPS (443) con SSL de Let's Encrypt
+  - PM2 para gestion del proceso Node.js con auto-restart
+  - JSON files (users.json, sessions.json) creados manualmente con estructura `{ "users": [] }` y `{ "sessions": [] }`
+  - Cloudflare DNS con registro A apuntando a IP publica de EC2 (proxy desactivado inicialmente)
+  - Certbot para SSL automatico con redirect HTTP→HTTPS
+- **Problemas encontrados y resueltos:**
+  - `tsc: not found` al hacer build: causado por `pnpm install --prod` que excluye devDependencies. Solucion: `pnpm install` completo, luego `pnpm prune --prod`
+  - `Permission denied` al escribir en `/etc/nginx/`: `sudo cat >` no funciona porque el redirect pierde permisos de sudo. Solucion: usar `sudo tee`
+  - Certbot creo server block duplicado con `return 404` que interceptaba peticiones. Solucion: editar config manualmente para tener un solo server block con SSL inline
+  - Error 500 en registro/login: archivos JSON no existian o tenian estructura incorrecta (`[]` en lugar de `{ "users": [] }`). Solucion: crear archivos con estructura correcta
+- **Siguiente paso:** Actualizar documento de respuesta tecnica con seccion de deploy
 
 ---
