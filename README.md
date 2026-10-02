@@ -280,12 +280,41 @@ class AuthService {
 ### Error de sistema
 - Enviar header `X-SnailPay-Simulate: system_error` en la peticion
 
+## Deploy en Produccion
+
+La aplicacion esta deployada en **https://snail.peracles.dev** usando AWS EC2 Free Tier.
+
+### Arquitectura de Deploy
+
+```
+Internet → Cloudflare DNS → EC2 t3.micro (Ubuntu 24.04)
+  ├─ Nginx :80/:443
+  │   ├─ /          → static files (vite build output)
+  │   └─ /api/*     → proxy_pass http://localhost:3000
+  └─ PM2 + Node.js :3000 (Express backend)
+      └─ JSON files (users.json, sessions.json)
+```
+
+### Costo: $0/mes
+
+| Recurso | Free Tier | Uso |
+|---|---|---|
+| EC2 t3.micro | 750 hrs/mes (12 meses) | 1 instancia 24/7 = ~730 hrs |
+| SSL | Let's Encrypt | Gratis |
+| DNS | Cloudflare | Gratis |
+
+### Guia de Deploy Detallada
+
+Para instrucciones completas paso a paso, ver [docs/deployment-guide.md](docs/deployment-guide.md).
+
+---
+
 ## Documentacion adicional
 
 | Documento | Descripcion |
 |---|---|
 | [Propuesta de base de datos](docs/propuesta-base-datos.md) | Diseno de schema PostgreSQL 17 + Prisma ORM, tablas, queries, migraciones y cambios necesarios en el backend para migrar de JSON store a base de datos relacional |
-| [Propuesta de despliegue](docs/propuesta-deploy.md) | Despliegue en AWS EC2 Free Tier con Nginx, PM2, Let's Encrypt y Cloudflare. Incluye nota sobre por que no se ejecuto el deploy real |
+| [Guia de despliegue](docs/deployment-guide.md) | Deploy ejecutado en AWS EC2 Free Tier con Nginx, PM2, Let's Encrypt y Cloudflare. Incluye explicacion detallada de cada comando, problemas encontrados y soluciones |
 
 ## Estructura del proyecto
 
@@ -296,7 +325,7 @@ jorge-1776/
 │   └── frontend/    # React + TypeScript (Feature-based)
 ├── docs/
 │   ├── propuesta-base-datos.md   # Propuesta PostgreSQL + Prisma
-│   └── propuesta-deploy.md       # Propuesta deploy AWS Free Tier
+│   └── deployment-guide.md       # Guia completa de deploy en AWS EC2
 ├── docker-compose.yml
-└── README.md
+── README.md
 ```
